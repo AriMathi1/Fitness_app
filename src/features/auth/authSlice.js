@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../../api/authService';
 
-// Get user from localStorage
 const user = JSON.parse(localStorage.getItem('user'));
 
 const initialState = {
@@ -12,7 +11,6 @@ const initialState = {
   message: '',
 };
 
-// Register user
 export const register = createAsyncThunk(
   'auth/register',
   async (userData, thunkAPI) => {
@@ -31,7 +29,6 @@ export const register = createAsyncThunk(
   }
 );
 
-// Login user
 export const login = createAsyncThunk(
   'auth/login',
   async (userData, thunkAPI) => {
@@ -50,7 +47,6 @@ export const login = createAsyncThunk(
   }
 );
 
-// Logout user
 export const logout = createAsyncThunk(
   'auth/logout',
   async () => {
@@ -58,7 +54,6 @@ export const logout = createAsyncThunk(
   }
 );
 
-// Request password reset
 export const forgotPassword = createAsyncThunk(
   'auth/forgotPassword',
   async (email, thunkAPI) => {
@@ -77,7 +72,6 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
-// Reset password
 export const resetPassword = createAsyncThunk(
   'auth/resetPassword',
   async ({ resetToken, password }, thunkAPI) => {
@@ -96,7 +90,6 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-// Get current user
 export const getCurrentUser = createAsyncThunk(
   'auth/getCurrentUser',
   async (_, thunkAPI) => {
@@ -128,7 +121,6 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Register
       .addCase(register.pending, (state) => {
         state.isLoading = true;
       })
@@ -143,7 +135,6 @@ export const authSlice = createSlice({
         state.message = action.payload;
         state.user = null;
       })
-      // Login
       .addCase(login.pending, (state) => {
         state.isLoading = true;
       })
@@ -158,11 +149,9 @@ export const authSlice = createSlice({
         state.message = action.payload;
         state.user = null;
       })
-      // Logout
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
       })
-      // Forgot Password
       .addCase(forgotPassword.pending, (state) => {
         state.isLoading = true;
       })
@@ -175,7 +164,6 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      // Reset Password
       .addCase(resetPassword.pending, (state) => {
         state.isLoading = true;
       })
@@ -188,7 +176,6 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      // Get Current User
       .addCase(getCurrentUser.pending, (state) => {
         state.isLoading = true;
       })

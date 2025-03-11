@@ -32,7 +32,6 @@ const ReviewForm = ({ trainerId, onReviewSubmitted }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate form
     if (rating === 0) {
       setError('Please select a rating');
       return;
@@ -49,13 +48,11 @@ const ReviewForm = ({ trainerId, onReviewSubmitted }) => {
     try {
       await dispatch(addTrainerReview({ trainerId, reviewData: formData })).unwrap();
       
-      // Reset form
       setFormData({
         rating: 0,
         comment: ''
       });
       
-      // Call the callback if provided
       if (onReviewSubmitted) {
         onReviewSubmitted();
       }

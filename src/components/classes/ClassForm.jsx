@@ -22,14 +22,12 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
   
   const { classTypes } = useSelector((state) => state.classes);
   
-  // Initialize form with data if editing
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
     }
   }, [initialData]);
   
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prevState => ({
@@ -37,7 +35,6 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
       [name]: type === 'checkbox' ? checked : value
     }));
     
-    // Clear error for this field
     if (formErrors[name]) {
       setFormErrors(prevErrors => ({
         ...prevErrors,
@@ -46,7 +43,6 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
     }
   };
   
-  // Handle schedule item changes
   const handleScheduleChange = (e) => {
     const { name, value } = e.target;
     setScheduleItem(prevState => ({
@@ -55,9 +51,7 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
     }));
   };
   
-  // Add schedule item to schedule
   const addScheduleItem = () => {
-    // Validate start time is before end time
     const start = scheduleItem.startTime.split(':');
     const end = scheduleItem.endTime.split(':');
     
@@ -70,7 +64,6 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
       return;
     }
     
-    // Check for overlap
     const hasOverlap = formData.schedule.some(item => {
       return item.day === scheduleItem.day && (
         (scheduleItem.startTime >= item.startTime && scheduleItem.startTime < item.endTime) ||
@@ -87,13 +80,11 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
       return;
     }
     
-    // Add to schedule
     setFormData(prevState => ({
       ...prevState,
       schedule: [...prevState.schedule, { ...scheduleItem }]
     }));
     
-    // Clear schedule error if any
     if (formErrors.schedule) {
       setFormErrors(prevErrors => ({
         ...prevErrors,
@@ -102,7 +93,6 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
     }
   };
   
-  // Remove schedule item
   const removeSchedule = (index) => {
     setFormData(prevState => ({
       ...prevState,
@@ -110,7 +100,6 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
     }));
   };
   
-  // Format time for display
   const formatTime = (time24h) => {
     if (!time24h) return '';
     
@@ -121,7 +110,6 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
     return `${hour12}:${minute} ${period}`;
   };
   
-  // Form validation
   const validateForm = () => {
     const errors = {};
     
@@ -153,14 +141,12 @@ const ClassForm = ({ initialData, onSubmit, isLoading }) => {
     return Object.keys(errors).length === 0;
   };
   
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     
     if (validateForm()) {
       onSubmit(formData);
     } else {
-      // Scroll to first error
       const firstError = document.querySelector('.text-red-600');
       if (firstError) {
         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });

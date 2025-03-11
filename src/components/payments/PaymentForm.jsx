@@ -2,17 +2,11 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPaymentIntent, confirmPayment, reset } from '../../features/payments/paymentsSlice';
 import Spinner from '../common/Spinner';
-
-// Note: To use this component, you need to install Stripe libraries:
-// npm install @stripe/stripe-js @stripe/react-stripe-js
-
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
-// Load Stripe with your publishable key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-// Card Element styling
 const cardElementOptions = {
   style: {
     base: {
@@ -31,7 +25,6 @@ const cardElementOptions = {
   }
 };
 
-// Individual Payment Form (inside Stripe Elements)
 const PaymentForm = ({ bookingId, amount, onSuccess }) => {
   const [cardError, setCardError] = useState('');
   const [processing, setProcessing] = useState(false);
@@ -45,7 +38,6 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
     (state) => state.payments
   );
   
-  // Create payment intent when component mounts
   useEffect(() => {
     dispatch(createPaymentIntent({
       bookingId,
@@ -57,12 +49,10 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
     };
   }, [dispatch, bookingId]);
   
-  // Handle payment confirmation success
   useEffect(() => {
     if (isSuccess && !paymentIntent && !processing) {
       setPaymentSuccess(true);
       
-      // Call the onSuccess callback after a short delay
       const timer = setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 1500);
@@ -71,7 +61,6 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
     }
   }, [isSuccess, paymentIntent, processing, onSuccess]);
   
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -82,7 +71,6 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
     setProcessing(true);
     setCardError('');
     
-    // Confirm card payment
     const result = await stripe.confirmCardPayment(paymentIntent.clientSecret, {
       payment_method: {
         card: elements.getElement(CardElement)
@@ -93,7 +81,6 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
       setCardError(result.error.message);
       setProcessing(false);
     } else if (result.paymentIntent.status === 'succeeded') {
-      // Payment succeeded, confirm on the backend
       dispatch(confirmPayment(result.paymentIntent.id));
     }
   };
@@ -174,7 +161,6 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
   );
 };
 
-// Wrapper component with Stripe Elements
 const PaymentFormWrapper = ({ bookingId, amount, onSuccess }) => {
   return (
     <Elements stripe={stripePromise}>

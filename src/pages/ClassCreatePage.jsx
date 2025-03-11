@@ -14,29 +14,24 @@ const ClassCreatePage = () => {
     (state) => state.classes
   );
   
-  // Check if user is a trainer
   useEffect(() => {
     if (user && user.userType !== 'trainer') {
       navigate('/dashboard');
     }
     
-    // Load class types for the form dropdown
     dispatch(getClassTypes());
     
-    // Reset state when component unmounts
     return () => {
       dispatch(reset());
     };
   }, [user, navigate, dispatch]);
   
-  // Redirect on successful class creation
   useEffect(() => {
     if (isSuccess) {
       navigate('/classes/manage');
     }
   }, [isSuccess, navigate]);
   
-  // Handle form submission
   const handleSubmit = (formData) => {
     dispatch(createClass(formData));
   };

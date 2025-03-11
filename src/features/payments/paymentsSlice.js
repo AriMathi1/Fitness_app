@@ -11,7 +11,6 @@ const initialState = {
   message: ''
 };
 
-// Create payment intent
 export const createPaymentIntent = createAsyncThunk(
   'payments/createIntent',
   async (data, thunkAPI) => {
@@ -29,7 +28,6 @@ export const createPaymentIntent = createAsyncThunk(
   }
 );
 
-// Confirm payment
 export const confirmPayment = createAsyncThunk(
   'payments/confirm',
   async (paymentIntentId, thunkAPI) => {
@@ -47,7 +45,6 @@ export const confirmPayment = createAsyncThunk(
   }
 );
 
-// Process refund
 export const refundPayment = createAsyncThunk(
   'payments/refund',
   async ({ paymentId, reason }, thunkAPI) => {
@@ -65,7 +62,6 @@ export const refundPayment = createAsyncThunk(
   }
 );
 
-// Get payment history
 export const getPaymentHistory = createAsyncThunk(
   'payments/getHistory',
   async (_, thunkAPI) => {
@@ -83,7 +79,6 @@ export const getPaymentHistory = createAsyncThunk(
   }
 );
 
-// Get payment details
 export const getPaymentDetails = createAsyncThunk(
   'payments/getDetails',
   async (id, thunkAPI) => {
@@ -120,7 +115,6 @@ export const paymentsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Create Payment Intent
       .addCase(createPaymentIntent.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -136,7 +130,6 @@ export const paymentsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Confirm Payment
       .addCase(confirmPayment.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -153,7 +146,6 @@ export const paymentsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Refund Payment
       .addCase(refundPayment.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -161,13 +153,11 @@ export const paymentsSlice = createSlice({
       .addCase(refundPayment.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // Update the payment in the payments array
         state.payments = state.payments.map(payment => 
           payment._id === action.payload.paymentId 
             ? { ...payment, status: 'refunded' } 
             : payment
         );
-        // Also update currentPayment if it's the same payment
         if (state.currentPayment && state.currentPayment._id === action.payload.paymentId) {
           state.currentPayment = { ...state.currentPayment, status: 'refunded' };
         }
@@ -178,7 +168,6 @@ export const paymentsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Payment History
       .addCase(getPaymentHistory.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -194,7 +183,6 @@ export const paymentsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Payment Details
       .addCase(getPaymentDetails.pending, (state) => {
         state.isLoading = true;
         state.isError = false;

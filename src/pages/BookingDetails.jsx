@@ -20,10 +20,8 @@ const BookingDetails = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   
-  // Determine if user is a trainer
   const isTrainer = user?.userType === 'trainer';
   
-  // Fetch booking data on component mount
   useEffect(() => {
     dispatch(getBooking(id));
     
@@ -32,7 +30,6 @@ const BookingDetails = () => {
     };
   }, [dispatch, id]);
   
-  // Handle success messages
   useEffect(() => {
     if (isSuccess && (showCancelConfirm || showStatusUpdateConfirm)) {
       if (showCancelConfirm) {
@@ -43,7 +40,6 @@ const BookingDetails = () => {
         setShowStatusUpdateConfirm(false);
       }
       
-      // Clear success message after 3 seconds
       const timer = setTimeout(() => {
         setSuccessMessage('');
       }, 3000);
@@ -52,7 +48,6 @@ const BookingDetails = () => {
     }
   }, [isSuccess, showCancelConfirm, showStatusUpdateConfirm, selectedStatus]);
   
-  // Format date
   const formatDate = (dateString) => {
     try {
       return format(new Date(dateString), 'EEEE, MMMM d, yyyy');
@@ -61,7 +56,6 @@ const BookingDetails = () => {
     }
   };
   
-  // Format time to 12-hour format
   const formatTime = (time24h) => {
     if (!time24h) return '';
     
@@ -72,7 +66,6 @@ const BookingDetails = () => {
     return `${hour12}:${minute} ${period}`;
   };
   
-  // Check if booking can be cancelled (before start time)
   const canCancel = () => {
     if (!currentBooking) return false;
     if (currentBooking.status === 'cancelled') return false;
@@ -80,7 +73,6 @@ const BookingDetails = () => {
     const bookingDate = new Date(currentBooking.date);
     const today = new Date();
     
-    // If booking date is in the future
     if (isAfter(bookingDate, today)) {
       return true;
     }
@@ -88,7 +80,6 @@ const BookingDetails = () => {
     return false;
   };
   
-  // Check if trainer can update status
   const canUpdateStatus = () => {
     if (!currentBooking || !isTrainer) return false;
     if (currentBooking.status === 'cancelled') return false;
@@ -96,19 +87,16 @@ const BookingDetails = () => {
     return true;
   };
   
-  // Handle booking cancellation
   const handleCancelBooking = () => {
     dispatch(cancelBooking(id));
   };
   
-  // Handle status update by trainer
   const handleStatusUpdate = () => {
     if (!selectedStatus) return;
     
     dispatch(updateBookingStatus({ id, status: selectedStatus }));
   };
   
-  // Get status badge color
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed':
@@ -185,7 +173,6 @@ const BookingDetails = () => {
           </Link>
         </nav>
         
-        {/* Success Message */}
         {successMessage && (
           <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-md">
             <div className="flex">
@@ -201,7 +188,6 @@ const BookingDetails = () => {
           </div>
         )}
         
-        {/* Error Message */}
         {isError && (
           <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md">
             <div className="flex">

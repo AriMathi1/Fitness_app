@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from '../../api/axiosConfig';
 
-// Simple components for UI patterns
 const ErrorAlert = ({ message }) => (
   <div className="bg-red-50 p-4 rounded mb-4">
     <p className="text-red-600">{message}</p>
@@ -33,7 +32,6 @@ const LoadingSkeleton = ({ type }) => {
   return <div className="animate-pulse h-10 bg-gray-200 rounded"></div>;
 };
 
-// Utility functions
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   
@@ -60,7 +58,6 @@ const isFutureDate = (dateString, timeString) => {
   }
 };
 
-// Main TrainerDashboard component
 const TrainerDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
@@ -84,7 +81,6 @@ const TrainerDashboard = () => {
     totalReviews: 0
   });
 
-  // Fetch trainer's classes
   useEffect(() => {
     const fetchClasses = async () => {
       try {
@@ -109,12 +105,10 @@ const TrainerDashboard = () => {
     }
   }, [user]);
 
-  // Fetch upcoming bookings
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         const response = await axios.get('/api/bookings/trainer');
-        // Sort bookings by date (nearest first)
         const sortedBookings = response.data.sort((a, b) => 
           new Date(a.date) - new Date(b.date)
         );
@@ -136,7 +130,6 @@ const TrainerDashboard = () => {
     }
   }, [user]);
 
-  // Fetch trainer profile information
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -162,12 +155,10 @@ const TrainerDashboard = () => {
     }
   }, [user]);
 
-  // Navigate to class form page
   const navigateToCreateClass = () => {
     navigate('/classes/new');
   };
 
-  // Filter only future bookings
   const filteredUpcomingBookings = upcomingBookings.filter(booking => 
     isFutureDate(booking.date, booking.startTime)
   );
@@ -176,7 +167,6 @@ const TrainerDashboard = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Trainer Dashboard</h1>
       
-      {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold mb-2">Active Classes</h3>
@@ -221,7 +211,6 @@ const TrainerDashboard = () => {
         </div>
       </div>
       
-      {/* Upcoming Sessions */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Upcoming Sessions</h2>
@@ -298,7 +287,6 @@ const TrainerDashboard = () => {
                         <button 
                           className="text-green-600 hover:text-green-900 mr-3"
                           onClick={() => {
-                            // This would be implemented to accept the booking
                             alert('This would accept the booking - API integration needed');
                           }}
                         >
@@ -325,7 +313,6 @@ const TrainerDashboard = () => {
         )}
       </div>
       
-      {/* My Classes */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
           <h2 className="text-2xl font-semibold">My Classes</h2>

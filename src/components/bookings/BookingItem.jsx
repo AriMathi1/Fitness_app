@@ -5,7 +5,6 @@ const BookingItem = ({ booking, isTrainer }) => {
   
   const { class: classDetails, date, startTime, endTime, status, user, trainer } = booking;
   
-  // Format the date
   const formatDate = (dateString) => {
     try {
       const dateObj = new Date(dateString);
@@ -15,7 +14,6 @@ const BookingItem = ({ booking, isTrainer }) => {
     }
   };
   
-  // Format time to 12-hour format
   const formatTime = (time24h) => {
     if (!time24h) return '';
     
@@ -26,7 +24,6 @@ const BookingItem = ({ booking, isTrainer }) => {
     return `${hour12}:${minute} ${period}`;
   };
   
-  // Get status badge color
   const getStatusColor = (status) => {
     switch (status) {
       case 'confirmed':
@@ -42,7 +39,6 @@ const BookingItem = ({ booking, isTrainer }) => {
     }
   };
   
-  // Format relative date (e.g., "2 days ago", "in 3 days")
   const getRelativeDate = (dateString) => {
     try {
       const dateObj = new Date(dateString);
@@ -81,7 +77,6 @@ const BookingItem = ({ booking, isTrainer }) => {
               <span>{formatTime(startTime)} - {formatTime(endTime)}</span>
             </div>
             
-            {/* Show client name for trainers, trainer name for clients */}
             <div className="mt-1 flex items-center text-sm text-gray-500">
               <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />

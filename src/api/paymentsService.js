@@ -2,7 +2,6 @@ import axiosInstance from './axiosConfig';
 
 const API_URL = '/payments';
 
-// Create a payment intent for a booking
 const createPaymentIntent = async (data) => {
   try {
     const response = await axiosInstance.post(`${API_URL}/create-intent`, data);
@@ -12,7 +11,6 @@ const createPaymentIntent = async (data) => {
   }
 };
 
-// Confirm payment after successful processing
 const confirmPayment = async (paymentIntentId) => {
   try {
     const response = await axiosInstance.post(`${API_URL}/confirm`, { paymentIntentId });
@@ -22,7 +20,6 @@ const confirmPayment = async (paymentIntentId) => {
   }
 };
 
-// Process a refund for a payment
 const refundPayment = async (paymentId, reason) => {
   try {
     const response = await axiosInstance.post(`${API_URL}/refund`, { paymentId, reason });
@@ -32,7 +29,6 @@ const refundPayment = async (paymentId, reason) => {
   }
 };
 
-// Get payment history
 const getPaymentHistory = async () => {
   try {
     const response = await axiosInstance.get(`${API_URL}/history`);
@@ -42,7 +38,6 @@ const getPaymentHistory = async () => {
   }
 };
 
-// Get payment details
 const getPaymentDetails = async (id) => {
   try {
     const response = await axiosInstance.get(`${API_URL}/${id}`);

@@ -1,9 +1,7 @@
 import axios from 'axios';
 
-// This is the fixed line - properly accessing the environment variable
 const baseURL = import.meta.env.VITE_API_URL;
 
-// Add debugging log
 console.log("API Base URL:", baseURL);
 
 const axiosInstance = axios.create({
@@ -13,7 +11,6 @@ const axiosInstance = axios.create({
   },
 });
 
-// Request interceptor for API calls
 axiosInstance.interceptors.request.use(
   (config) => {
     try {
@@ -25,7 +22,6 @@ axiosInstance.interceptors.request.use(
         console.log("User parsed:", user ? "Successfully" : "Failed");
         
         if (user && user.token) {
-          // Set the header exactly as expected by your backend
           config.headers['x-auth-token'] = user.token;
           console.log("Token applied to request header");
         } else {
@@ -45,7 +41,6 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Response interceptor for API calls
 axiosInstance.interceptors.response.use(
   (response) => {
     return response;
@@ -53,10 +48,8 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
-    // Handle token expiration - you might want to refresh token here
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
       console.log("401 Unauthorized error - logging out user");
-      // Handle token issues or logout user
       localStorage.removeItem('user');
       window.location.href = '/login';
     }

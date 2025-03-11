@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 const ClassCard = ({ classItem }) => {
   if (!classItem) return null;
   
-  // Format price
   const formatPrice = (price) => {
     return `$${price.toFixed(2)}`;
   };

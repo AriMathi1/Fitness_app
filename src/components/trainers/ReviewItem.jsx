@@ -12,24 +12,19 @@ const ReviewItem = ({ review }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   
-  // Check if the logged-in user is the trainer who received this review
   const isReviewedTrainer = user && user.userType === 'trainer' && 
                             user.id === review.trainerId;
   
-  // Format the review date
   const formattedDate = format(new Date(review.createdAt), 'MMM d, yyyy');
   
-  // Generate star rating display
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     
-    // Full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(<FaStar key={`full-${i}`} className="text-yellow-400" />);
     }
     
-    // Empty stars
     for (let i = fullStars; i < 5; i++) {
       stars.push(<FaRegStar key={`empty-${i}`} className="text-gray-300" />);
     }
@@ -77,7 +72,6 @@ const ReviewItem = ({ review }) => {
       
       <p className="text-gray-700 my-2">{review.comment}</p>
       
-      {/* Trainer's response */}
       {review.trainerResponse && (
         <div className="mt-3 bg-gray-50 p-3 rounded-md border-l-4 border-blue-500">
           <div className="font-medium text-gray-800 mb-1">Trainer Response:</div>
@@ -85,7 +79,6 @@ const ReviewItem = ({ review }) => {
         </div>
       )}
       
-      {/* Reply option for trainer */}
       {isReviewedTrainer && !review.trainerResponse && (
         <div className="mt-3">
           {!showReplyForm ? (

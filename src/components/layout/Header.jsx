@@ -19,12 +19,10 @@ const Header = () => {
     <header className="bg-white shadow">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          {/* Logo */}
           <Link to="/" className="flex items-center">
             <span className="text-xl font-bold text-primary-600">FitnessConnect</span>
           </Link>
 
-          {/* Desktop navigation */}
           <nav className="hidden md:flex space-x-8">
             <Link to="/classes" className="text-gray-600 hover:text-primary-500">
               Classes

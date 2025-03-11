@@ -2,10 +2,8 @@ import axiosInstance from './axiosConfig';
 
 const API_URL = '/bookings';
 
-// Get user bookings
 const getBookings = async (params = {}) => {
   try {
-    // Build query string for filtering
     const queryParams = new URLSearchParams();
     if (params.status) queryParams.append('status', params.status);
     if (params.upcoming) queryParams.append('upcoming', params.upcoming);
@@ -19,7 +17,6 @@ const getBookings = async (params = {}) => {
   }
 };
 
-// Get single booking
 const getBooking = async (id) => {
   try {
     const response = await axiosInstance.get(`${API_URL}/${id}`);
@@ -29,7 +26,6 @@ const getBooking = async (id) => {
   }
 };
 
-// Create new booking
 const createBooking = async (bookingData) => {
   try {
     const response = await axiosInstance.post(API_URL, bookingData);
@@ -39,7 +35,6 @@ const createBooking = async (bookingData) => {
   }
 };
 
-// Cancel booking (for clients)
 const cancelBooking = async (id) => {
   try {
     const response = await axiosInstance.put(`${API_URL}/${id}`, { 
@@ -51,10 +46,8 @@ const cancelBooking = async (id) => {
   }
 };
 
-// Get trainer bookings
 const getTrainerBookings = async (params = {}) => {
   try {
-    // Build query string for filtering
     const queryParams = new URLSearchParams();
     if (params.status) queryParams.append('status', params.status);
     if (params.upcoming) queryParams.append('upcoming', params.upcoming);
@@ -68,7 +61,6 @@ const getTrainerBookings = async (params = {}) => {
   }
 };
 
-// Update booking status (for trainers)
 const updateBookingStatus = async (id, status) => {
   try {
     const response = await axiosInstance.put(`${API_URL}/trainer/${id}`, { 
@@ -81,7 +73,6 @@ const updateBookingStatus = async (id, status) => {
   }
 };
 
-// Get booking statistics (for dashboard)
 const getBookingStats = async () => {
   try {
     const response = await axiosInstance.get(`${API_URL}/stats`);

@@ -1,10 +1,8 @@
 import axios from 'axios';
 
-// Use environment variable for API URL
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
 const AUTH_ENDPOINT = `${API_URL}/auth/`;
 
-// Create axios instance with default config
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -12,12 +10,10 @@ const api = axios.create({
   }
 });
 
-// Add a request interceptor to add auth token to requests
 api.interceptors.request.use(
   (config) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user && user.token) {
-      // Use x-auth-token header as expected by backend
       config.headers['x-auth-token'] = user.token;
     }
     return config;
@@ -27,19 +23,15 @@ api.interceptors.request.use(
   }
 );
 
-// Register user
-// Register user
 const register = async (userData) => {
   try {
     const response = await api.post(AUTH_ENDPOINT + 'register', userData);
     
     if (response.data && response.data.token) {
-      // Create user object with token and user data
       const userToStore = {
         token: response.data.token
       };
       
-      // Add user properties if they exist
       if (response.data.user) {
         userToStore.id = response.data.user.id;
         userToStore.name = response.data.user.name;
@@ -57,18 +49,15 @@ const register = async (userData) => {
   }
 };
 
-// Login user
 const login = async (userData) => {
   try {
     const response = await api.post(AUTH_ENDPOINT + 'login', userData);
     
     if (response.data && response.data.token) {
-      // Create user object with token and user data
       const userToStore = {
         token: response.data.token
       };
       
-      // Add user properties if they exist
       if (response.data.user) {
         userToStore.id = response.data.user.id;
         userToStore.name = response.data.user.name;
@@ -77,7 +66,7 @@ const login = async (userData) => {
       }
       
       localStorage.setItem('user', JSON.stringify(userToStore));
-      console.log('Stored user data after login:', userToStore); // Debug log
+      console.log('Stored user data after login:', userToStore); 
     }
     return response.data;
   } catch (error) {
@@ -86,12 +75,10 @@ const login = async (userData) => {
   }
 };
 
-// Logout user
 const logout = () => {
   localStorage.removeItem('user');
 };
 
-// Forgot password
 const forgotPassword = async (email) => {
   try {
     const response = await api.post(AUTH_ENDPOINT + 'forgot-password', { email });
@@ -102,7 +89,6 @@ const forgotPassword = async (email) => {
   }
 };
 
-// Reset password
 const resetPassword = async (resetToken, password) => {
   try {
     const response = await api.post(
@@ -116,7 +102,6 @@ const resetPassword = async (resetToken, password) => {
   }
 };
 
-// Get current user
 const getCurrentUser = async () => {
   try {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -133,27 +118,21 @@ const getCurrentUser = async () => {
   }
 };
 
-// Helper function to handle API errors
 const handleApiError = (error) => {
-  // Handle different error responses
   if (error.response && error.response.data) {
-    // Handle array of errors from express-validator
     if (error.response.data.errors && Array.isArray(error.response.data.errors)) {
       return error.response.data.errors[0].msg;
     }
     
-    // Handle single error message
     if (error.response.data.msg) {
       return error.response.data.msg;
     }
     
-    // Handle general message
     if (error.response.data.message) {
       return error.response.data.message;
     }
   }
   
-  // Default error message
   return error.message || 'An unexpected error occurred';
 };
 

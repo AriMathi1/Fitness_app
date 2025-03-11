@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import classesService from '../../api/classesService';
 
-// Initial state of the slice
 const initialState = {
   classes: [],
   currentClass: null,
@@ -13,7 +12,6 @@ const initialState = {
   message: ''
 };
 
-// Get all classes with filtering
 export const getClasses = createAsyncThunk(
   'classes/getAll',
   async (filters, thunkAPI) => {
@@ -31,7 +29,6 @@ export const getClasses = createAsyncThunk(
   }
 );
 
-// Get class by ID
 export const getClass = createAsyncThunk(
   'classes/getOne',
   async (classId, thunkAPI) => {
@@ -49,7 +46,6 @@ export const getClass = createAsyncThunk(
   }
 );
 
-// Create a new class (trainers only)
 export const createClass = createAsyncThunk(
   'classes/create',
   async (classData, thunkAPI) => {
@@ -67,7 +63,6 @@ export const createClass = createAsyncThunk(
   }
 );
 
-// Update a class (trainers only)
 export const updateClass = createAsyncThunk(
   'classes/update',
   async ({ classId, classData }, thunkAPI) => {
@@ -85,13 +80,12 @@ export const updateClass = createAsyncThunk(
   }
 );
 
-// Delete a class (trainers only)
 export const deleteClass = createAsyncThunk(
   'classes/delete',
   async (classId, thunkAPI) => {
     try {
       await classesService.deleteClass(classId);
-      return classId; // Return the ID for filtering in the reducer
+      return classId;
     } catch (error) {
       const message =
         (error.response &&
@@ -104,7 +98,6 @@ export const deleteClass = createAsyncThunk(
   }
 );
 
-// Get class types for filtering
 export const getClassTypes = createAsyncThunk(
   'classes/getTypes',
   async (_, thunkAPI) => {
@@ -122,7 +115,6 @@ export const getClassTypes = createAsyncThunk(
   }
 );
 
-// Get classes by trainer
 export const getTrainerClasses = createAsyncThunk(
   'classes/getByTrainer',
   async (trainerId, thunkAPI) => {
@@ -140,7 +132,6 @@ export const getTrainerClasses = createAsyncThunk(
   }
 );
 
-// Get personalized class recommendations
 export const getRecommendations = createAsyncThunk(
   'classes/getRecommendations',
   async (limit = 5, thunkAPI) => {
@@ -177,7 +168,6 @@ export const classesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Get Classes
       .addCase(getClasses.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -193,7 +183,6 @@ export const classesSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Class by ID
       .addCase(getClass.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -209,7 +198,6 @@ export const classesSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Create Class
       .addCase(createClass.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -217,7 +205,7 @@ export const classesSlice = createSlice({
       .addCase(createClass.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.classes.unshift(action.payload); // Add to the beginning of the array
+        state.classes.unshift(action.payload);
       })
       .addCase(createClass.rejected, (state, action) => {
         state.isLoading = false;
@@ -225,7 +213,6 @@ export const classesSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Update Class
       .addCase(updateClass.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -233,11 +220,9 @@ export const classesSlice = createSlice({
       .addCase(updateClass.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // Update the class in the classes array
         state.classes = state.classes.map(classItem => 
           classItem._id === action.payload._id ? action.payload : classItem
         );
-        // Also update currentClass if it's the same class
         if (state.currentClass && state.currentClass._id === action.payload._id) {
           state.currentClass = action.payload;
         }
@@ -248,7 +233,6 @@ export const classesSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Delete Class
       .addCase(deleteClass.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -256,9 +240,7 @@ export const classesSlice = createSlice({
       .addCase(deleteClass.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // Remove the class from the classes array
         state.classes = state.classes.filter(classItem => classItem._id !== action.payload);
-        // Also clear currentClass if it's the same class
         if (state.currentClass && state.currentClass._id === action.payload) {
           state.currentClass = null;
         }
@@ -269,7 +251,6 @@ export const classesSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Class Types
       .addCase(getClassTypes.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -285,7 +266,6 @@ export const classesSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Trainer Classes
       .addCase(getTrainerClasses.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -301,7 +281,6 @@ export const classesSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Recommendations
       .addCase(getRecommendations.pending, (state) => {
         state.isLoading = true;
         state.isError = false;

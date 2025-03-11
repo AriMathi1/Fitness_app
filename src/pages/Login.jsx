@@ -22,13 +22,11 @@ const Login = () => {
   );
   
   useEffect(() => {
-    // Redirect when logged in
     if (isSuccess || user) {
       navigate('/dashboard');
     }
     
     return () => {
-      // Reset state when component unmounts
       dispatch(reset());
     };
   }, [user, isSuccess, navigate, dispatch]);
@@ -40,7 +38,6 @@ const Login = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
     
-    // Clear error for this field when changing
     if (formErrors[name]) {
       setFormErrors({
         ...formErrors,
@@ -83,7 +80,6 @@ const Login = () => {
     
     dispatch(login(userData));
     
-    // Save email in localStorage if rememberMe is checked
     if (rememberMe) {
       localStorage.setItem('rememberedEmail', email);
     } else {
@@ -91,7 +87,6 @@ const Login = () => {
     }
   };
   
-  // Load remembered email on component mount
   useEffect(() => {
     const rememberedEmail = localStorage.getItem('rememberedEmail');
     if (rememberedEmail) {

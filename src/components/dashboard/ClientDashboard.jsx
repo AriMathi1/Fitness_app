@@ -1,4 +1,3 @@
-// components/dashboard/ClientDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axiosInstance from '../../api/axiosConfig';
@@ -51,7 +50,6 @@ const ClientDashboard = () => {
   }, []);
 
 
-  // Format date (if needed)
   const formatDate = (dateString) => {
     try {
       const options = { weekday: 'short', month: 'short', day: 'numeric' };
@@ -63,7 +61,6 @@ const ClientDashboard = () => {
 
   return (
     <div className="space-y-8">
-      {/* Upcoming Bookings Section */}
       <div>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-gray-900">Upcoming Bookings</h3>
@@ -146,7 +143,6 @@ const ClientDashboard = () => {
         )}
       </div>
 
-      {/* Recommended Classes Section */}
       <div>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium text-gray-900">Recommended For You</h3>

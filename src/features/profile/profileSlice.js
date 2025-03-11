@@ -11,7 +11,6 @@ const initialState = {
   updateSuccess: false
 };
 
-// Get user profile
 export const getProfile = createAsyncThunk(
   'profile/getProfile',
   async (_, thunkAPI) => {
@@ -29,7 +28,6 @@ export const getProfile = createAsyncThunk(
   }
 );
 
-// Update user profile
 export const updateProfile = createAsyncThunk(
   'profile/updateProfile',
   async (profileData, thunkAPI) => {
@@ -68,7 +66,6 @@ export const profileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Get Profile
       .addCase(getProfile.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -85,7 +82,6 @@ export const profileSlice = createSlice({
         state.profile = null;
       })
       
-      // Update Profile
       .addCase(updateProfile.pending, (state) => {
         state.isUpdating = true;
         state.updateSuccess = false;

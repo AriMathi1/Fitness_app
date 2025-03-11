@@ -18,10 +18,8 @@ const Bookings = () => {
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [filterParams, setFilterParams] = useState({ upcoming: 'true' });
   
-  // Determine if user is a trainer
   const isTrainer = user?.userType === 'trainer';
 
-  // Fetch appropriate bookings on component mount
   useEffect(() => {
     if (isTrainer) {
       dispatch(getTrainerBookings(filterParams));
@@ -34,7 +32,6 @@ const Bookings = () => {
     };
   }, [dispatch, isTrainer, filterParams]);
 
-  // Filter bookings based on active filter
   useEffect(() => {
     const bookingsToFilter = isTrainer ? trainerBookings : bookings;
     
@@ -45,11 +42,9 @@ const Bookings = () => {
     }
   }, [bookings, trainerBookings, activeFilter, isTrainer]);
 
-  // Handle filter selection
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
     
-    // Update API filter params
     let params = {};
     switch (filter) {
       case 'upcoming':
@@ -67,7 +62,6 @@ const Bookings = () => {
     
     setFilterParams(params);
     
-    // Fetch bookings with new filters
     if (isTrainer) {
       dispatch(getTrainerBookings(params));
     } else {
@@ -75,7 +69,6 @@ const Bookings = () => {
     }
   };
 
-  // Filter bookings by status
   const filterBookings = (filter, bookingsToFilter) => {
     switch (filter) {
       case 'upcoming':
@@ -101,7 +94,6 @@ const Bookings = () => {
     }
   };
 
-  // Handle booking click
   const handleBookingClick = (bookingId) => {
     navigate(`/bookings/${bookingId}`);
   };

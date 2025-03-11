@@ -3,18 +3,15 @@ import { Link } from 'react-router-dom';
 import { FaStar, FaRegStar } from 'react-icons/fa';
 
 const TrainerCard = ({ trainer }) => {
-  // Generate star rating display
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     
-    // Full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(<FaStar key={`full-${i}`} className="text-yellow-400" />);
     }
     
-    // Empty stars
     for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
       stars.push(<FaRegStar key={`empty-${i}`} className="text-gray-300" />);
     }
@@ -22,7 +19,6 @@ const TrainerCard = ({ trainer }) => {
     return stars;
   };
   
-  // Create a summary of specialties (limit to 3)
   const specialtySummary = trainer.profile.specialties.slice(0, 3).join(', ');
 
   return (

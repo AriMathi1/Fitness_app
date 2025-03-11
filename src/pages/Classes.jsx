@@ -23,7 +23,6 @@ const Classes = () => {
   const [sortOption, setSortOption] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
   
-  // Load class types on component mount
   useEffect(() => {
     dispatch(getClassTypes());
     
@@ -32,7 +31,6 @@ const Classes = () => {
     };
   }, [dispatch]);
   
-  // Handle search debouncing
   useEffect(() => {
     setIsSearching(true);
     const timerId = setTimeout(() => {
@@ -45,7 +43,6 @@ const Classes = () => {
     };
   }, [filters.search]);
   
-  // Fetch classes whenever filters change
   useEffect(() => {
     const queryFilters = {
       ...filters,
@@ -120,7 +117,6 @@ const Classes = () => {
           </Link>
         </div>
         
-        {/* Search Bar */}
         <div className="mt-6 relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,7 +141,6 @@ const Classes = () => {
           )}
         </div>
         
-        {/* Filters Toggle (Mobile) */}
         <div className="md:hidden mt-4">
           <button 
             onClick={() => setShowFilters(!showFilters)}
@@ -158,7 +153,6 @@ const Classes = () => {
           </button>
         </div>
         
-        {/* Filters and Sorting Section */}
         <div className={`mt-4 bg-white p-4 rounded-lg shadow-sm ${showFilters ? 'block' : 'hidden md:block'}`}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
             <h2 className="text-lg font-semibold text-gray-900 mb-2 md:mb-0">Filters & Sorting</h2>
@@ -173,7 +167,6 @@ const Classes = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Class Type Filter */}
             <div>
               <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
                 Class Type
@@ -194,7 +187,6 @@ const Classes = () => {
               </select>
             </div>
             
-            {/* Location Filter */}
             <div>
               <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
                 Location
@@ -212,7 +204,6 @@ const Classes = () => {
               </select>
             </div>
             
-            {/* Sorting Options */}
             <div className="md:col-span-2">
               <label htmlFor="sort" className="block text-sm font-medium text-gray-700 mb-1">
                 Sort By
@@ -235,14 +226,12 @@ const Classes = () => {
           </div>
         </div>
         
-        {/* Results Count */}
         <div className="mt-4 flex items-center justify-between">
           <p className="text-sm text-gray-600">
             {isLoading ? 'Loading classes...' : `${sortedClasses.length} classes found`}
           </p>
         </div>
         
-        {/* Classes List */}
         <div className="mt-6">
           {isLoading ? (
             <div className="py-12 flex justify-center">

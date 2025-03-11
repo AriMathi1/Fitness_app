@@ -4,7 +4,6 @@ import ClientDashboard from '../components/dashboard/ClientDashboard';
 import TrainerDashboard from '../components/dashboard/TrainerDashboard'
 
 const Dashboard = () => {
-  // Get user from Redux store
   const { user, isLoading } = useSelector((state) => state.auth);
   
   console.log("Dashboard rendering with user:", user);

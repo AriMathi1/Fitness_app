@@ -11,7 +11,6 @@ const initialState = {
   message: ''
 };
 
-// Get trainers with optional filtering
 export const getTrainers = createAsyncThunk(
   'trainers/getTrainers',
   async (filters, thunkAPI) => {
@@ -29,7 +28,6 @@ export const getTrainers = createAsyncThunk(
   }
 );
 
-// Get a single trainer by ID
 export const getTrainer = createAsyncThunk(
   'trainers/getTrainer',
   async (id, thunkAPI) => {
@@ -47,7 +45,6 @@ export const getTrainer = createAsyncThunk(
   }
 );
 
-// Get reviews for a trainer
 export const getTrainerReviews = createAsyncThunk(
   'trainers/getTrainerReviews',
   async (trainerId, thunkAPI) => {
@@ -65,7 +62,6 @@ export const getTrainerReviews = createAsyncThunk(
   }
 );
 
-// Add a review for a trainer
 export const addTrainerReview = createAsyncThunk(
   'trainers/addTrainerReview',
   async ({ trainerId, reviewData }, thunkAPI) => {
@@ -83,7 +79,6 @@ export const addTrainerReview = createAsyncThunk(
   }
 );
 
-// Trainer responds to a review
 export const respondToReview = createAsyncThunk(
   'trainers/respondToReview',
   async ({ reviewId, response }, thunkAPI) => {
@@ -117,7 +112,6 @@ export const trainersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // getTrainers
       .addCase(getTrainers.pending, (state) => {
         state.isLoading = true;
       })
@@ -132,7 +126,6 @@ export const trainersSlice = createSlice({
         state.message = action.payload;
       })
       
-      // getTrainer
       .addCase(getTrainer.pending, (state) => {
         state.isLoading = true;
       })
@@ -147,7 +140,6 @@ export const trainersSlice = createSlice({
         state.message = action.payload;
       })
       
-      // getTrainerReviews
       .addCase(getTrainerReviews.pending, (state) => {
         state.isLoading = true;
       })
@@ -162,7 +154,6 @@ export const trainersSlice = createSlice({
         state.message = action.payload;
       })
       
-      // addTrainerReview
       .addCase(addTrainerReview.pending, (state) => {
         state.isLoading = true;
       })
@@ -177,7 +168,6 @@ export const trainersSlice = createSlice({
         state.message = action.payload;
       })
       
-      // respondToReview
       .addCase(respondToReview.pending, (state) => {
         state.isLoading = true;
       })

@@ -11,7 +11,6 @@ const initialState = {
   message: ''
 };
 
-// Get user bookings
 export const getBookings = createAsyncThunk(
   'bookings/getAll',
   async (params, thunkAPI) => {
@@ -29,7 +28,6 @@ export const getBookings = createAsyncThunk(
   }
 );
 
-// Get single booking
 export const getBooking = createAsyncThunk(
   'bookings/getOne',
   async (id, thunkAPI) => {
@@ -47,7 +45,6 @@ export const getBooking = createAsyncThunk(
   }
 );
 
-// Create booking
 export const createBooking = createAsyncThunk(
   'bookings/create',
   async (bookingData, thunkAPI) => {
@@ -65,7 +62,6 @@ export const createBooking = createAsyncThunk(
   }
 );
 
-// Cancel booking
 export const cancelBooking = createAsyncThunk(
   'bookings/cancel',
   async (id, thunkAPI) => {
@@ -83,7 +79,6 @@ export const cancelBooking = createAsyncThunk(
   }
 );
 
-// Get trainer bookings
 export const getTrainerBookings = createAsyncThunk(
   'bookings/getTrainerBookings',
   async (params, thunkAPI) => {
@@ -101,7 +96,6 @@ export const getTrainerBookings = createAsyncThunk(
   }
 );
 
-// Update booking status (trainer)
 export const updateBookingStatus = createAsyncThunk(
   'bookings/updateStatus',
   async ({ id, status }, thunkAPI) => {
@@ -135,7 +129,6 @@ export const bookingsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Get Bookings
       .addCase(getBookings.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -151,7 +144,6 @@ export const bookingsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Single Booking
       .addCase(getBooking.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -167,7 +159,6 @@ export const bookingsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Create Booking
       .addCase(createBooking.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -183,7 +174,6 @@ export const bookingsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Cancel Booking
       .addCase(cancelBooking.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -191,11 +181,9 @@ export const bookingsSlice = createSlice({
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // Update the booking in the bookings array
         state.bookings = state.bookings.map(booking => 
           booking._id === action.payload._id ? action.payload : booking
         );
-        // Also update currentBooking if it's the same booking
         if (state.currentBooking && state.currentBooking._id === action.payload._id) {
           state.currentBooking = action.payload;
         }
@@ -206,7 +194,6 @@ export const bookingsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Get Trainer Bookings
       .addCase(getTrainerBookings.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -222,7 +209,6 @@ export const bookingsSlice = createSlice({
         state.message = action.payload;
       })
       
-      // Update Booking Status
       .addCase(updateBookingStatus.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -230,11 +216,9 @@ export const bookingsSlice = createSlice({
       .addCase(updateBookingStatus.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        // Update the booking in the trainerBookings array
         state.trainerBookings = state.trainerBookings.map(booking => 
           booking._id === action.payload._id ? action.payload : booking
         );
-        // Also update currentBooking if it's the same booking
         if (state.currentBooking && state.currentBooking._id === action.payload._id) {
           state.currentBooking = action.payload;
         }
