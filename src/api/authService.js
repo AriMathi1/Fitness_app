@@ -28,17 +28,27 @@ api.interceptors.request.use(
 );
 
 // Register user
+// Register user
 const register = async (userData) => {
   try {
     const response = await api.post(AUTH_ENDPOINT + 'register', userData);
     
     if (response.data && response.data.token) {
-      // Store both token and user info if available
+      // Create user object with token and user data
       const userToStore = {
-        token: response.data.token,
-        ...(response.data.user && { ...response.data.user })
+        token: response.data.token
       };
+      
+      // Add user properties if they exist
+      if (response.data.user) {
+        userToStore.id = response.data.user.id;
+        userToStore.name = response.data.user.name;
+        userToStore.email = response.data.user.email;
+        userToStore.userType = response.data.user.userType;
+      }
+      
       localStorage.setItem('user', JSON.stringify(userToStore));
+      console.log('Stored user data:', userToStore); // Debug log
     }
     return response.data;
   } catch (error) {
@@ -53,12 +63,21 @@ const login = async (userData) => {
     const response = await api.post(AUTH_ENDPOINT + 'login', userData);
     
     if (response.data && response.data.token) {
-      // Store both token and user info
+      // Create user object with token and user data
       const userToStore = {
-        token: response.data.token,
-        ...(response.data.user && { ...response.data.user })
+        token: response.data.token
       };
+      
+      // Add user properties if they exist
+      if (response.data.user) {
+        userToStore.id = response.data.user.id;
+        userToStore.name = response.data.user.name;
+        userToStore.email = response.data.user.email;
+        userToStore.userType = response.data.user.userType;
+      }
+      
       localStorage.setItem('user', JSON.stringify(userToStore));
+      console.log('Stored user data after login:', userToStore); // Debug log
     }
     return response.data;
   } catch (error) {
