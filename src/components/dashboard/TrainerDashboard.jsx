@@ -84,7 +84,7 @@ const TrainerDashboard = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await axios.get('/api/classes', {
+        const response = await axios.get('/classes', {
           params: { trainerId: user._id }
         });
         setClasses(response.data);
@@ -108,7 +108,7 @@ const TrainerDashboard = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await axios.get('/api/bookings/trainer');
+        const response = await axios.get('/bookings/trainer');
         const sortedBookings = response.data.sort((a, b) => 
           new Date(a.date) - new Date(b.date)
         );
@@ -133,7 +133,7 @@ const TrainerDashboard = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('/api/profile');
+        const response = await axios.get('/profile');
         setProfile({
           rating: response.data.profile?.rating || 0,
           totalReviews: response.data.profile?.totalReviews || 0
@@ -317,7 +317,7 @@ const TrainerDashboard = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
           <h2 className="text-2xl font-semibold">My Classes</h2>
           <Link 
-            to="/classes/new" 
+            to="/classes/create" 
             className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-center"
             aria-label="Create a new class"
           >

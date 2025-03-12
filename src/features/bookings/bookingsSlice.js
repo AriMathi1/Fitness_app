@@ -66,7 +66,9 @@ export const cancelBooking = createAsyncThunk(
   'bookings/cancel',
   async (id, thunkAPI) => {
     try {
+      console.log('Attempting to cancel booking:', id);
       return await bookingsService.cancelBooking(id);
+      console.log('Cancel booking response:', response);
     } catch (error) {
       const message =
         (error.response &&
@@ -181,11 +183,13 @@ export const bookingsSlice = createSlice({
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        console.log('Cancellation successful, payload:', action.payload);
         state.bookings = state.bookings.map(booking => 
           booking._id === action.payload._id ? action.payload : booking
         );
         if (state.currentBooking && state.currentBooking._id === action.payload._id) {
           state.currentBooking = action.payload;
+          console.log('Updated current booking to:', state.currentBooking);
         }
       })
       .addCase(cancelBooking.rejected, (state, action) => {

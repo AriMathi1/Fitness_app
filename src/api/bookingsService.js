@@ -37,11 +37,19 @@ const createBooking = async (bookingData) => {
 
 const cancelBooking = async (id) => {
   try {
+    console.log('API service: Cancelling booking with ID:', id);
     const response = await axiosInstance.put(`${API_URL}/${id}`, { 
       status: 'cancelled' 
     });
+    console.log('API service: Cancel booking response:', response.data);
+    
+    if (response.data.status !== 'cancelled') {
+      console.error('API returned success but booking status is not cancelled:', response.data.status);
+    }
+    
     return response.data;
   } catch (error) {
+    console.error('API service: Error cancelling booking:', error);
     throw error;
   }
 };

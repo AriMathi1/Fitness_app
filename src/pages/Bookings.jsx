@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { getBookings, getTrainerBookings, reset } from '../features/bookings/bookingsSlice';
 import BookingItem from '../components/bookings/BookingItem';
 import Spinner from '../components/common/Spinner';
@@ -8,7 +8,8 @@ import Spinner from '../components/common/Spinner';
 const Bookings = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+  const location = useLocation();
+
   const { user } = useSelector((state) => state.auth);
   const { bookings, trainerBookings, isLoading, isError, message } = useSelector(
     (state) => state.bookings
@@ -17,7 +18,8 @@ const Bookings = () => {
   const [activeFilter, setActiveFilter] = useState('upcoming');
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [filterParams, setFilterParams] = useState({ upcoming: 'true' });
-  
+  const [paymentSuccessMessage, setPaymentSuccessMessage] = useState('');
+
   const isTrainer = user?.userType === 'trainer';
 
   useEffect(() => {
@@ -34,7 +36,7 @@ const Bookings = () => {
 
   useEffect(() => {
     const bookingsToFilter = isTrainer ? trainerBookings : bookings;
-    
+
     if (bookingsToFilter?.length > 0) {
       filterBookings(activeFilter, bookingsToFilter);
     } else {
@@ -42,9 +44,26 @@ const Bookings = () => {
     }
   }, [bookings, trainerBookings, activeFilter, isTrainer]);
 
+  useEffect(() => {
+    if (location.state?.from === 'payment' && location.state?.success) {
+      setPaymentSuccessMessage(location.state.message || 'Payment successful!');
+
+      // Clear the message after 5 seconds
+      const timer = setTimeout(() => {
+        setPaymentSuccessMessage('');
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+    if (location.state?.activeFilter) {
+      setActiveFilter(location.state.activeFilter);
+      handleFilterChange(location.state.activeFilter);
+    }
+  }, [location]);
+
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
-    
+
     let params = {};
     switch (filter) {
       case 'upcoming':
@@ -59,9 +78,9 @@ const Bookings = () => {
       default:
         params = {};
     }
-    
+
     setFilterParams(params);
-    
+
     if (isTrainer) {
       dispatch(getTrainerBookings(params));
     } else {
@@ -69,30 +88,34 @@ const Bookings = () => {
     }
   };
 
-  const filterBookings = (filter, bookingsToFilter) => {
-    switch (filter) {
-      case 'upcoming':
-        setFilteredBookings(
-          bookingsToFilter.filter(booking => 
-            booking.status !== 'cancelled' && 
-            booking.status !== 'completed'
-          )
-        );
-        break;
-      case 'completed':
-        setFilteredBookings(
-          bookingsToFilter.filter(booking => booking.status === 'completed')
-        );
-        break;
-      case 'cancelled':
-        setFilteredBookings(
-          bookingsToFilter.filter(booking => booking.status === 'cancelled')
-        );
-        break;
-      default:
-        setFilteredBookings(bookingsToFilter);
-    }
-  };
+const filterBookings = (filter, bookingsToFilter) => {
+  console.log('Filtering bookings with filter:', filter);
+  console.log('Bookings before filtering:', bookingsToFilter);
+  
+  switch (filter) {
+    case 'upcoming':
+      setFilteredBookings(
+        bookingsToFilter.filter(booking => 
+          booking.status !== 'cancelled' && 
+          booking.status !== 'completed'
+        )
+      );
+      break;
+    case 'completed':
+      setFilteredBookings(
+        bookingsToFilter.filter(booking => booking.status === 'completed')
+      );
+      break;
+    case 'cancelled':
+      setFilteredBookings(
+        bookingsToFilter.filter(booking => booking.status === 'cancelled')
+      );
+      break;
+    default:
+      setFilteredBookings(bookingsToFilter);
+  }
+  console.log('Filtered bookings:', filteredBookings);
+};
 
   const handleBookingClick = (bookingId) => {
     navigate(`/bookings/${bookingId}`);
@@ -117,7 +140,7 @@ const Bookings = () => {
           <h1 className="text-3xl font-bold text-gray-900">
             {isTrainer ? 'Your Sessions' : 'Your Bookings'}
           </h1>
-          
+
           <Link
             to="/dashboard"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
@@ -125,7 +148,22 @@ const Bookings = () => {
             Back to Dashboard
           </Link>
         </div>
-        
+
+        {paymentSuccessMessage && (
+          <div className="mt-4 mb-6 bg-green-100 border-l-4 border-green-500 p-4 rounded-md">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-green-700">{paymentSuccessMessage}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {isError && (
           <div className="mt-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md">
             <div className="flex">
@@ -140,43 +178,40 @@ const Bookings = () => {
             </div>
           </div>
         )}
-        
+
         <div className="mt-6 bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="border-b border-gray-200">
             <nav className="flex -mb-px">
               <button
-                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeFilter === 'upcoming'
+                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${activeFilter === 'upcoming'
                     ? 'text-indigo-600 border-indigo-500'
                     : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
                 onClick={() => handleFilterChange('upcoming')}
               >
                 Upcoming
               </button>
               <button
-                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeFilter === 'completed'
+                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${activeFilter === 'completed'
                     ? 'text-indigo-600 border-indigo-500'
                     : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
                 onClick={() => handleFilterChange('completed')}
               >
                 Completed
               </button>
               <button
-                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeFilter === 'cancelled'
+                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${activeFilter === 'cancelled'
                     ? 'text-indigo-600 border-indigo-500'
                     : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
                 onClick={() => handleFilterChange('cancelled')}
               >
                 Cancelled
               </button>
             </nav>
           </div>
-          
+
           {filteredBookings.length === 0 ? (
             <div className="text-center py-16 px-4">
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,12 +224,12 @@ const Bookings = () => {
                     ? "You don't have any upcoming sessions."
                     : "You don't have any upcoming bookings."
                   : activeFilter === 'completed'
-                  ? isTrainer
-                    ? "You don't have any completed sessions."
-                    : "You don't have any completed bookings."
-                  : isTrainer
-                    ? "You don't have any cancelled sessions."
-                    : "You don't have any cancelled bookings."}
+                    ? isTrainer
+                      ? "You don't have any completed sessions."
+                      : "You don't have any completed bookings."
+                    : isTrainer
+                      ? "You don't have any cancelled sessions."
+                      : "You don't have any cancelled bookings."}
               </p>
               {activeFilter === 'upcoming' && !isTrainer && (
                 <div className="mt-6">
@@ -210,14 +245,14 @@ const Bookings = () => {
           ) : (
             <div className="divide-y divide-gray-200">
               {filteredBookings.map((booking) => (
-                <div 
+                <div
                   key={booking._id}
                   onClick={() => handleBookingClick(booking._id)}
                   className="cursor-pointer hover:bg-gray-50 transition-colors duration-150"
                 >
-                  <BookingItem 
-                    booking={booking} 
-                    isTrainer={isTrainer} 
+                  <BookingItem
+                    booking={booking}
+                    isTrainer={isTrainer}
                   />
                 </div>
               ))}

@@ -23,11 +23,18 @@ const ResetPassword = () => {
   );
   
   useEffect(() => {
+    if (!resetToken) {
+      setFormErrors({
+        ...formErrors,
+        general: 'Invalid reset token. Please request a new password reset link.'
+      });
+    }
+
     return () => {
       // Reset state when component unmounts
       dispatch(reset());
     };
-  }, [dispatch]);
+  }, [dispatch, resetToken]);
   
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -68,6 +75,14 @@ const ResetPassword = () => {
     if (!validateForm()) {
       return;
     }
+
+    if (!resetToken) {
+      setFormErrors({
+        ...formErrors,
+        general: 'Invalid reset token. Please request a new password reset link.'
+      });
+      return;
+    }
     
     dispatch(resetPassword({ resetToken, password }));
     setSubmitted(true);
@@ -99,7 +114,30 @@ const ResetPassword = () => {
             Enter your new password below
           </p>
         </div>
-        
+        {formErrors.general && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-red-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-700">{formErrors.general}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {isError && (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
             <div className="flex">

@@ -11,7 +11,7 @@ const ClassDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   const { user } = useSelector((state) => state.auth);
   const { currentClass, isLoading: classLoading, isError: classError, message: classMessage } = useSelector(
     (state) => state.classes
@@ -24,6 +24,7 @@ const ClassDetails = () => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [bookingId, setBookingId] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [paymentSuccessMessage, setPaymentSuccessMessage] = useState('');
   const [bookingStatus, setBookingStatus] = useState('initial'); // initial, created, paid
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -65,7 +66,7 @@ const ClassDetails = () => {
   const handleScheduleChange = (e) => {
     const day = e.target.value;
     setSelectedDate(day);
-    
+
     const schedule = currentClass.schedule.find(s => s.day === day);
     setSelectedSchedule(schedule);
   };
@@ -80,24 +81,24 @@ const ClassDetails = () => {
   const getUpcomingDates = (dayName, count = 3) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dayIndex = days.findIndex(day => day === dayName);
-    
+
     if (dayIndex === -1) return [];
-    
+
     const today = new Date();
     const currentDayIndex = today.getDay();
     const dates = [];
-    
+
     for (let i = 0; i < count; i++) {
       let daysToAdd = dayIndex - currentDayIndex + (7 * i);
       if (daysToAdd <= 0 && i === 0) daysToAdd += 7; // First occurrence should be in the future
-      
+
       const nextDate = new Date(today);
       nextDate.setDate(today.getDate() + daysToAdd);
-      
+
       // Format date
       const month = nextDate.toLocaleString('default', { month: 'short' });
       const date = nextDate.getDate();
-      
+
       dates.push({
         full: nextDate,
         formatted: `${month} ${date}`,
@@ -105,7 +106,7 @@ const ClassDetails = () => {
         isToday: isToday(nextDate)
       });
     }
-    
+
     return dates;
   };
 
@@ -113,8 +114,8 @@ const ClassDetails = () => {
   const isToday = (date) => {
     const today = new Date();
     return date.getDate() === today.getDate() &&
-           date.getMonth() === today.getMonth() &&
-           date.getFullYear() === today.getFullYear();
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
   };
 
   // Handle booking creation
@@ -123,28 +124,28 @@ const ClassDetails = () => {
       navigate('/login');
       return;
     }
-    
+
     if (!selectedSchedule) {
       setErrorMessage('Please select a schedule first');
       return;
     }
-    
+
     setErrorMessage('');
-    
+
     try {
       // Calculate booking date based on the selected day
       const bookingDate = getUpcomingDates(selectedSchedule.day, 1)[0].full;
-      
+
       const bookingData = {
         classId: currentClass._id,
         date: bookingDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
         startTime: selectedSchedule.startTime,
         endTime: selectedSchedule.endTime
       };
-      
+
       // Dispatch the createBooking action
       const response = await dispatch(createBooking(bookingData)).unwrap();
-      
+
       // Store the booking ID for payment processing
       setBookingId(response._id);
       setBookingStatus('created');
@@ -165,12 +166,22 @@ const ClassDetails = () => {
 
   // Handle payment success
   const handlePaymentSuccess = () => {
+    console.log('Payment success callback triggered');
     setBookingStatus('paid');
     setShowPaymentForm(false);
-    
-    // Show success message and redirect to bookings page after a delay
+
+    setPaymentSuccessMessage('Payment successful! Your booking has been confirmed.');
+
+    window.scrollTo(0, 0);
+
     setTimeout(() => {
-      navigate('/bookings');
+      navigate('/bookings', {
+        state: {
+          from: 'payment',
+          success: true,
+          message: 'Your payment was successful and your booking has been confirmed.'
+        }
+      });
     }, 3000);
   };
 
@@ -200,7 +211,7 @@ const ClassDetails = () => {
               Back to Classes
             </Link>
           </nav>
-          
+
           <div className="text-center bg-white rounded-lg shadow py-12 px-4 sm:px-6">
             <svg className="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -232,7 +243,23 @@ const ClassDetails = () => {
             Back to Classes
           </Link>
         </nav>
-        
+
+        {paymentSuccessMessage && (
+            <div className="mb-6 bg-green-100 border-l-4 border-green-500 p-4 rounded-md">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-green-700 font-medium">{paymentSuccessMessage}</p>
+                  <p className="text-xs text-green-600 mt-1">Redirecting to your bookings page...</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <div className="p-6">
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
@@ -244,7 +271,7 @@ const ClassDetails = () => {
                     {currentClass.type}
                   </span>
                 </div>
-                
+
                 <div className="mt-3 flex items-center text-gray-500 text-sm">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -252,12 +279,12 @@ const ClassDetails = () => {
                   </svg>
                   <span>{currentClass.location}</span>
                 </div>
-                
+
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-gray-900">Description</h2>
                   <p className="mt-2 text-gray-600">{currentClass.description}</p>
                 </div>
-                
+
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-gray-900">Class Details</h2>
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -272,7 +299,7 @@ const ClassDetails = () => {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-gray-50 p-4 rounded-lg">
                       <div className="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -286,20 +313,19 @@ const ClassDetails = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Schedule Section */}
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-gray-900">Schedule</h2>
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {currentClass.schedule.map((schedule, index) => (
-                      <div 
+                      <div
                         key={index}
-                        className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                          selectedSchedule && selectedSchedule.day === schedule.day && 
-                          selectedSchedule.startTime === schedule.startTime
+                        className={`border rounded-lg p-4 cursor-pointer transition-colors ${selectedSchedule && selectedSchedule.day === schedule.day &&
+                            selectedSchedule.startTime === schedule.startTime
                             ? 'border-indigo-500 bg-indigo-50'
                             : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/50'
-                        }`}
+                          }`}
                         onClick={() => handleScheduleClick(schedule)}
                       >
                         <div className="flex items-center mb-2">
@@ -311,17 +337,17 @@ const ClassDetails = () => {
                         <p className="text-gray-600">
                           {formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}
                         </p>
-                        {selectedSchedule && selectedSchedule.day === schedule.day && 
+                        {selectedSchedule && selectedSchedule.day === schedule.day &&
                           selectedSchedule.startTime === schedule.startTime && (
-                          <div className="mt-2 text-xs text-indigo-600 font-medium">
-                            Selected
-                          </div>
-                        )}
+                            <div className="mt-2 text-xs text-indigo-600 font-medium">
+                              Selected
+                            </div>
+                          )}
                       </div>
                     ))}
                   </div>
                 </div>
-                
+
                 {/* Trainer Information */}
                 {currentClass.trainer && (
                   <div className="mt-8 border-t pt-8">
@@ -338,17 +364,16 @@ const ClassDetails = () => {
                           <div className="flex items-center mt-1">
                             <div className="flex">
                               {[...Array(5)].map((_, i) => (
-                                <svg 
+                                <svg
                                   key={i}
-                                  className={`h-4 w-4 ${
-                                    i < Math.floor(currentClass.trainer.profile.rating)
+                                  className={`h-4 w-4 ${i < Math.floor(currentClass.trainer.profile.rating)
                                       ? 'text-yellow-400'
                                       : i < Math.ceil(currentClass.trainer.profile.rating)
                                         ? 'text-yellow-400'
                                         : 'text-gray-300'
-                                  }`} 
-                                  xmlns="http://www.w3.org/2000/svg" 
-                                  viewBox="0 0 20 20" 
+                                    }`}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
                                   fill="currentColor"
                                 >
                                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -361,7 +386,7 @@ const ClassDetails = () => {
                           </div>
                         )}
                       </div>
-                      <Link 
+                      <Link
                         to={`/trainers/${currentClass.trainer._id}`}
                         className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
                       >
@@ -371,19 +396,19 @@ const ClassDetails = () => {
                   </div>
                 )}
               </div>
-              
+
               {/* Booking Section */}
               <div className="mt-8 lg:mt-0 lg:w-96">
                 {!showPaymentForm ? (
                   <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Book this Class</h3>
-                    
+
                     {errorMessage && (
                       <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-md text-sm">
                         {errorMessage}
                       </div>
                     )}
-                    
+
                     {bookingStatus === 'paid' ? (
                       <div className="mb-4 p-3 bg-green-50 text-green-700 rounded-md">
                         <div className="flex items-start">
@@ -402,7 +427,7 @@ const ClassDetails = () => {
                             <p className="text-gray-700">
                               {formatTime(selectedSchedule.startTime)} - {formatTime(selectedSchedule.endTime)}
                             </p>
-                            
+
                             {/* Show upcoming dates */}
                             <div className="mt-4">
                               <h4 className="text-sm font-medium text-gray-700 mb-2">Upcoming Dates</h4>
@@ -411,7 +436,7 @@ const ClassDetails = () => {
                                   <div key={index} className="flex items-center">
                                     <div className={`w-2 h-2 rounded-full mr-2 ${index === 0 ? 'bg-indigo-500' : 'bg-gray-300'}`}></div>
                                     <span className="text-sm">
-                                      {date.formatted} 
+                                      {date.formatted}
                                       {date.isToday && <span className="ml-1 text-xs font-medium text-indigo-600">(Today)</span>}
                                     </span>
                                   </div>
@@ -420,7 +445,7 @@ const ClassDetails = () => {
                             </div>
                           </div>
                         )}
-                        
+
                         <div className="mb-6">
                           <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
                             Select Schedule
@@ -442,24 +467,23 @@ const ClassDetails = () => {
                             Or click on a schedule card above to select it
                           </p>
                         </div>
-                        
+
                         <div className="mb-6">
                           <p className="text-sm text-gray-700 mb-1">Price</p>
                           <p className="text-3xl font-bold text-indigo-600">${currentClass.price}</p>
                         </div>
-                        
+
                         <button
                           onClick={handleBookClass}
                           disabled={!selectedSchedule}
-                          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                            !selectedSchedule
+                          className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${!selectedSchedule
                               ? 'bg-indigo-300 cursor-not-allowed'
                               : 'bg-indigo-600 hover:bg-indigo-700'
-                          }`}
+                            }`}
                         >
                           Book Now
                         </button>
-                        
+
                         {!user && (
                           <p className="mt-3 text-sm text-gray-500 text-center">
                             Please <Link to="/login" className="text-indigo-600 hover:text-indigo-800">sign in</Link> to book this class.
@@ -469,8 +493,8 @@ const ClassDetails = () => {
                     )}
                   </div>
                 ) : (
-                  <PaymentForm 
-                    bookingId={bookingId} 
+                  <PaymentForm
+                    bookingId={bookingId}
                     amount={currentClass.price}
                     onSuccess={handlePaymentSuccess}
                   />

@@ -50,6 +50,7 @@ export const createClass = createAsyncThunk(
   'classes/create',
   async (classData, thunkAPI) => {
     try {
+      console.log('Creating class with data:', classData);
       return await classesService.createClass(classData);
     } catch (error) {
       const message =

@@ -48,7 +48,7 @@ const Classes = () => {
       ...filters,
       search: debouncedSearch
     };
-    
+    console.log('Fetching classes with filters:', queryFilters);
     dispatch(getClasses(queryFilters));
   }, [dispatch, filters.type, filters.location, debouncedSearch]);
   

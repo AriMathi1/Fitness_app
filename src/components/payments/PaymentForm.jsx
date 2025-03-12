@@ -52,14 +52,17 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
   useEffect(() => {
     if (isSuccess && !paymentIntent && !processing) {
       setPaymentSuccess(true);
+      setProcessing(false);
       
+      dispatch(reset());
+
       const timer = setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 1500);
       
       return () => clearTimeout(timer);
     }
-  }, [isSuccess, paymentIntent, processing, onSuccess]);
+  }, [isSuccess, paymentIntent, processing, onSuccess, dispatch]);
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,18 +73,24 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
     
     setProcessing(true);
     setCardError('');
-    
-    const result = await stripe.confirmCardPayment(paymentIntent.clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement)
+    try {
+      const result = await stripe.confirmCardPayment(paymentIntent.clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement)
+        }
+      });
+      
+      if (result.error) {
+        setCardError(result.error.message);
+        setProcessing(false);
+      } else if (result.paymentIntent.status === 'succeeded') {
+        console.log('Payment succeeded:', result.paymentIntent.id);
+        dispatch(confirmPayment(result.paymentIntent.id));
       }
-    });
-    
-    if (result.error) {
-      setCardError(result.error.message);
+    } catch (error) {
+      console.error('Payment error:', error);
+      setCardError('An unexpected error occurred. Please try again.');
       setProcessing(false);
-    } else if (result.paymentIntent.status === 'succeeded') {
-      dispatch(confirmPayment(result.paymentIntent.id));
     }
   };
   
@@ -95,22 +104,31 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
     );
   }
   
-  if (paymentSuccess) {
-    return (
-      <div className="bg-gray-50 rounded-lg p-6 shadow-sm">
-        <div className="text-center">
-          <svg className="mx-auto h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  // In src/components/payments/PaymentForm.jsx
+
+// Enhance the success UI in the PaymentForm
+if (paymentSuccess) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+      <div className="text-center">
+        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+          <svg className="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <h3 className="mt-2 text-lg font-medium text-gray-900">Payment Successful!</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Your booking has been confirmed. Redirecting to your bookings...
-          </p>
+        </div>
+        <h3 className="mt-3 text-lg font-medium text-gray-900">Payment Successful!</h3>
+        <p className="mt-2 text-sm text-gray-500">
+          Your payment has been processed successfully. Your booking is now confirmed.
+        </p>
+        <div className="mt-4">
+          <div className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600">
+            Processing your booking...
+          </div>
         </div>
       </div>
-    );
-  }
-  
+    </div>
+  );
+}
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
       <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Details</h3>

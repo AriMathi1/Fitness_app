@@ -129,7 +129,7 @@ export const paymentsSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      
+
       .addCase(confirmPayment.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -139,13 +139,18 @@ export const paymentsSlice = createSlice({
         state.isSuccess = true;
         state.currentPayment = action.payload;
         state.paymentIntent = null;
+        if (state.payments.length > 0) {
+          state.payments = state.payments.map(payment =>
+            payment._id === action.payload._id ? action.payload : payment
+          );
+        }
       })
       .addCase(confirmPayment.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      
+
       .addCase(refundPayment.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -153,9 +158,9 @@ export const paymentsSlice = createSlice({
       .addCase(refundPayment.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.payments = state.payments.map(payment => 
-          payment._id === action.payload.paymentId 
-            ? { ...payment, status: 'refunded' } 
+        state.payments = state.payments.map(payment =>
+          payment._id === action.payload.paymentId
+            ? { ...payment, status: 'refunded' }
             : payment
         );
         if (state.currentPayment && state.currentPayment._id === action.payload.paymentId) {
@@ -167,7 +172,7 @@ export const paymentsSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      
+
       .addCase(getPaymentHistory.pending, (state) => {
         state.isLoading = true;
         state.isError = false;
@@ -182,7 +187,7 @@ export const paymentsSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      
+
       .addCase(getPaymentDetails.pending, (state) => {
         state.isLoading = true;
         state.isError = false;

@@ -33,6 +33,7 @@ const ClassCreatePage = () => {
   }, [isSuccess, navigate]);
   
   const handleSubmit = (formData) => {
+    console.log('Submitting class data:', formData);
     dispatch(createClass(formData));
   };
   

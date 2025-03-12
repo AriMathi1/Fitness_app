@@ -87,9 +87,28 @@ const BookingDetails = () => {
     return true;
   };
   
-  const handleCancelBooking = () => {
-    dispatch(cancelBooking(id));
-  };
+const handleCancelBooking = () => {
+  console.log('Cancelling booking with id:', id);
+  
+  dispatch(cancelBooking(id))
+    .unwrap()
+    .then(() => {
+      setSuccessMessage('Booking has been successfully cancelled');
+      setShowCancelConfirm(false);
+
+      dispatch(getBooking(id));
+      
+      dispatch(getBookings(filterParams));
+      
+      setTimeout(() => {
+        navigate('/bookings', { state: { activeFilter: 'cancelled' } });
+      }, 2000);
+    })
+    .catch((error) => {
+      console.error('Error cancelling booking:', error);
+      setError(error.message || 'Failed to cancel booking');
+    });
+};
   
   const handleStatusUpdate = () => {
     if (!selectedStatus) return;
