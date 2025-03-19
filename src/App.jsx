@@ -3,11 +3,9 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getCurrentUser } from './features/auth/authSlice';
 
-// Layout components
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 
-// Public pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -18,7 +16,6 @@ import Trainers from './pages/Trainers';
 import TrainerDetails from './pages/TrainerDetails';
 import NotFound from './pages/NotFound';
 
-// Protected pages
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Bookings from './pages/Bookings';
@@ -29,11 +26,9 @@ import TrainerClassesManage from './pages/TrainerClassesManage';
 import ClassCreatePage from './pages/ClassCreatePage';
 import ClassEditPage from './pages/ClassEditPage';
 
-// Route protection components
 import PrivateRoute from './components/common/PrivateRoute';
 import TrainerRoute from './components/common/TrainerRoute';
 
-// Layout wrapper for authenticated pages
 const AuthenticatedLayout = ({ children }) => (
   <div className="flex flex-col min-h-screen">
     <Header />
@@ -47,26 +42,22 @@ function App() {
   const { user, isLoading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    // Try to get current user info if we have a token in localStorage
     if (localStorage.getItem('user')) {
       dispatch(getCurrentUser());
     }
   }, [dispatch]);
 
-  // Handle loading state
   if (isLoading && !user) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 
   return (
     <Routes>
-      {/* Auth Routes (No Layout) */}
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" replace />} />
       <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" replace />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
 
-      {/* Public Routes with Layout */}
       <Route
         path="/"
         element={
@@ -108,7 +99,6 @@ function App() {
         }
       />
 
-      {/* Protected Routes - Client & Trainer */}
       <Route
         path="/dashboard"
         element={
@@ -170,7 +160,6 @@ function App() {
         }
       />
 
-      {/* Trainer-specific Routes */}
       <Route
         path="/classes/manage"
         element={
@@ -212,7 +201,6 @@ function App() {
         }
       />
 
-      {/* 404 Route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

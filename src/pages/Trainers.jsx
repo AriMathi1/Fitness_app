@@ -11,7 +11,6 @@ const Trainers = () => {
     (state) => state.trainers
   );
   
-  // State for filters
   const [filters, setFilters] = useState({
     specialty: '',
     rating: '',
@@ -19,12 +18,10 @@ const Trainers = () => {
   });
   const [showFilters, setShowFilters] = useState(false);
   
-  // Collect all unique specialties from trainers for filter dropdown
   const specialties = [...new Set(
     trainers.flatMap(trainer => trainer.profile.specialties || [])
   )].sort();
   
-  // Fetch trainers on page load
   useEffect(() => {
     dispatch(getTrainers());
     
@@ -33,7 +30,6 @@ const Trainers = () => {
     };
   }, [dispatch]);
   
-  // Handle filter changes
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters({
@@ -42,7 +38,6 @@ const Trainers = () => {
     });
   };
   
-  // Apply filters
   const handleApplyFilters = () => {
     dispatch(getTrainers({
       specialty: filters.specialty,
@@ -50,7 +45,6 @@ const Trainers = () => {
     }));
   };
   
-  // Reset filters
   const handleResetFilters = () => {
     setFilters({
       specialty: '',
@@ -60,7 +54,6 @@ const Trainers = () => {
     dispatch(getTrainers());
   };
   
-  // Filter trainers by search term (client-side filtering)
   const filteredTrainers = trainers.filter(trainer => {
     if (!filters.searchTerm) return true;
     
@@ -83,9 +76,7 @@ const Trainers = () => {
     <div className="max-w-6xl mx-auto mt-8 px-4 pb-12">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Find a Trainer</h1>
       
-      {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-md p-4 mb-8">
-        {/* Search Bar */}
         <div className="relative mb-4">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FaSearch className="text-gray-400" />
@@ -100,7 +91,6 @@ const Trainers = () => {
           />
         </div>
         
-        {/* Toggle Filters */}
         <button
           onClick={() => setShowFilters(!showFilters)}
           className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
@@ -109,7 +99,6 @@ const Trainers = () => {
           {showFilters ? 'Hide Filters' : 'Show Advanced Filters'}
         </button>
         
-        {/* Filter Options */}
         {showFilters && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
@@ -157,7 +146,6 @@ const Trainers = () => {
           </div>
         )}
         
-        {/* Filter Buttons */}
         {showFilters && (
           <div className="flex justify-end space-x-3">
             <button
@@ -176,14 +164,12 @@ const Trainers = () => {
         )}
       </div>
       
-      {/* Error Message */}
       {isError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
           Error: {message}
         </div>
       )}
       
-      {/* Trainers Grid */}
       {filteredTrainers.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTrainers.map((trainer) => (

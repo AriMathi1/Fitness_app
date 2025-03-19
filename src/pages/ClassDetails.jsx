@@ -25,10 +25,9 @@ const ClassDetails = () => {
   const [bookingId, setBookingId] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [paymentSuccessMessage, setPaymentSuccessMessage] = useState('');
-  const [bookingStatus, setBookingStatus] = useState('initial'); // initial, created, paid
+  const [bookingStatus, setBookingStatus] = useState('initial'); 
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Fetch class data on component mount
   useEffect(() => {
     dispatch(getClass(id));
 
@@ -39,7 +38,6 @@ const ClassDetails = () => {
     };
   }, [dispatch, id]);
 
-  // Set default schedule when class data is loaded
   useEffect(() => {
     if (currentClass && currentClass.schedule && currentClass.schedule.length > 0) {
       setSelectedDate(currentClass.schedule[0].day);
@@ -47,7 +45,6 @@ const ClassDetails = () => {
     }
   }, [currentClass]);
 
-  // Handle booking success
   useEffect(() => {
     if (bookingSuccess && bookingStatus === 'initial') {
       setBookingStatus('created');
@@ -55,14 +52,12 @@ const ClassDetails = () => {
     }
   }, [bookingSuccess, bookingStatus]);
 
-  // Handle booking errors
   useEffect(() => {
     if (bookingError && bookingMessage) {
       setErrorMessage(bookingMessage);
     }
   }, [bookingError, bookingMessage]);
 
-  // Handle schedule selection
   const handleScheduleChange = (e) => {
     const day = e.target.value;
     setSelectedDate(day);
@@ -71,13 +66,11 @@ const ClassDetails = () => {
     setSelectedSchedule(schedule);
   };
 
-  // Handle direct schedule selection by clicking the card
   const handleScheduleClick = (schedule) => {
     setSelectedDate(schedule.day);
     setSelectedSchedule(schedule);
   };
 
-  // Calculate upcoming dates for the selected day
   const getUpcomingDates = (dayName, count = 3) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dayIndex = days.findIndex(day => day === dayName);
@@ -90,12 +83,11 @@ const ClassDetails = () => {
 
     for (let i = 0; i < count; i++) {
       let daysToAdd = dayIndex - currentDayIndex + (7 * i);
-      if (daysToAdd <= 0 && i === 0) daysToAdd += 7; // First occurrence should be in the future
+      if (daysToAdd <= 0 && i === 0) daysToAdd += 7;
 
       const nextDate = new Date(today);
       nextDate.setDate(today.getDate() + daysToAdd);
 
-      // Format date
       const month = nextDate.toLocaleString('default', { month: 'short' });
       const date = nextDate.getDate();
 
@@ -110,7 +102,6 @@ const ClassDetails = () => {
     return dates;
   };
 
-  // Check if a date is today
   const isToday = (date) => {
     const today = new Date();
     return date.getDate() === today.getDate() &&
@@ -118,7 +109,6 @@ const ClassDetails = () => {
       date.getFullYear() === today.getFullYear();
   };
 
-  // Handle booking creation
   const handleBookClass = async () => {
     if (!user) {
       navigate('/login');
@@ -133,20 +123,17 @@ const ClassDetails = () => {
     setErrorMessage('');
 
     try {
-      // Calculate booking date based on the selected day
       const bookingDate = getUpcomingDates(selectedSchedule.day, 1)[0].full;
 
       const bookingData = {
         classId: currentClass._id,
-        date: bookingDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        date: bookingDate.toISOString().split('T')[0], 
         startTime: selectedSchedule.startTime,
         endTime: selectedSchedule.endTime
       };
 
-      // Dispatch the createBooking action
       const response = await dispatch(createBooking(bookingData)).unwrap();
 
-      // Store the booking ID for payment processing
       setBookingId(response._id);
       setBookingStatus('created');
       setShowPaymentForm(true);
@@ -155,7 +142,6 @@ const ClassDetails = () => {
     }
   };
 
-  // Format time to 12-hour format
   const formatTime = (time24h) => {
     const [hour, minute] = time24h.split(':');
     const hourInt = parseInt(hour, 10);
@@ -164,7 +150,6 @@ const ClassDetails = () => {
     return `${hour12}:${minute} ${period}`;
   };
 
-  // Handle payment success
   const handlePaymentSuccess = () => {
     console.log('Payment success callback triggered');
     setBookingStatus('paid');
@@ -185,7 +170,6 @@ const ClassDetails = () => {
     }, 3000);
   };
 
-  // Show loading spinner
   if (classLoading || bookingLoading) {
     return (
       <div className="bg-gray-50 min-h-screen py-8">
@@ -198,7 +182,6 @@ const ClassDetails = () => {
     );
   }
 
-  // Show error message
   if (classError || !currentClass) {
     return (
       <div className="bg-gray-50 min-h-screen py-8">
@@ -263,7 +246,6 @@ const ClassDetails = () => {
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <div className="p-6">
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start">
-              {/* Class Details Section */}
               <div className="flex-1 pr-0 lg:pr-12">
                 <div className="flex flex-wrap items-center gap-3">
                   <h1 className="text-3xl font-bold text-gray-900">{currentClass.title}</h1>
@@ -314,7 +296,6 @@ const ClassDetails = () => {
                   </div>
                 </div>
 
-                {/* Schedule Section */}
                 <div className="mt-8">
                   <h2 className="text-xl font-semibold text-gray-900">Schedule</h2>
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -348,7 +329,6 @@ const ClassDetails = () => {
                   </div>
                 </div>
 
-                {/* Trainer Information */}
                 {currentClass.trainer && (
                   <div className="mt-8 border-t pt-8">
                     <h2 className="text-xl font-semibold text-gray-900">Trainer</h2>
@@ -397,7 +377,6 @@ const ClassDetails = () => {
                 )}
               </div>
 
-              {/* Booking Section */}
               <div className="mt-8 lg:mt-0 lg:w-96">
                 {!showPaymentForm ? (
                   <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
@@ -428,7 +407,6 @@ const ClassDetails = () => {
                               {formatTime(selectedSchedule.startTime)} - {formatTime(selectedSchedule.endTime)}
                             </p>
 
-                            {/* Show upcoming dates */}
                             <div className="mt-4">
                               <h4 className="text-sm font-medium text-gray-700 mb-2">Upcoming Dates</h4>
                               <div className="space-y-2">

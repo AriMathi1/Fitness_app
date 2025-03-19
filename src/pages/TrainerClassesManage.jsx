@@ -19,14 +19,12 @@ const TrainerClassesManage = () => {
   const [activeFilter, setActiveFilter] = useState('active');
   const [filteredClasses, setFilteredClasses] = useState([]);
   
-  // Check if user is a trainer
   useEffect(() => {
     if (user && user.userType !== 'trainer') {
       navigate('/dashboard');
     }
   }, [user, navigate]);
   
-  // Fetch trainer's classes
   useEffect(() => {
     dispatch(getTrainerClasses(user?.id));
     
@@ -35,7 +33,6 @@ const TrainerClassesManage = () => {
     };
   }, [dispatch, user]);
   
-  // Filter classes based on activeFilter
   useEffect(() => {
     if (classes?.length > 0) {
       if (activeFilter === 'active') {
@@ -48,14 +45,12 @@ const TrainerClassesManage = () => {
     }
   }, [classes, activeFilter]);
   
-  // Set success message when class is deleted
   useEffect(() => {
     if (isSuccess && classToDelete) {
       setSuccessMessage(`Class "${classToDelete.title}" has been deleted`);
       setClassToDelete(null);
       setShowDeleteModal(false);
       
-      // Clear success message after 3 seconds
       const timer = setTimeout(() => {
         setSuccessMessage('');
       }, 3000);
@@ -64,7 +59,6 @@ const TrainerClassesManage = () => {
     }
   }, [isSuccess, classToDelete]);
   
-  // Format time to 12-hour format
   const formatTime = (time24h) => {
     if (!time24h) return '';
     
@@ -75,7 +69,6 @@ const TrainerClassesManage = () => {
     return `${hour12}:${minute} ${period}`;
   };
   
-  // Format schedule days and times
   const formatSchedule = (schedule) => {
     if (!schedule || schedule.length === 0) return 'No schedule set';
     
@@ -84,7 +77,6 @@ const TrainerClassesManage = () => {
     ).join(', ');
   };
   
-  // Handle delete class
   const confirmDelete = (classItem) => {
     setClassToDelete(classItem);
     setShowDeleteModal(true);
@@ -96,12 +88,10 @@ const TrainerClassesManage = () => {
     }
   };
   
-  // Handle edit class
   const handleEditClass = (classId) => {
     navigate(`/classes/edit/${classId}`);
   };
   
-  // Handle view class
   const handleViewClass = (classId) => {
     navigate(`/classes/${classId}`);
   };
@@ -135,7 +125,6 @@ const TrainerClassesManage = () => {
           </div>
         </div>
         
-        {/* Success Message */}
         {successMessage && (
           <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-md">
             <div className="flex">
@@ -151,7 +140,6 @@ const TrainerClassesManage = () => {
           </div>
         )}
         
-        {/* Error Message */}
         {isError && (
           <div className="mt-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md">
             <div className="flex">
@@ -167,7 +155,6 @@ const TrainerClassesManage = () => {
           </div>
         )}
         
-        {/* Class Filter Tabs */}
         <div className="mt-6 border-b border-gray-200">
           <nav className="flex -mb-px">
             <button
@@ -193,7 +180,6 @@ const TrainerClassesManage = () => {
           </nav>
         </div>
         
-        {/* Classes Table */}
         <div className="mt-6 bg-white shadow overflow-hidden rounded-lg">
           {filteredClasses.length === 0 ? (
             <div className="text-center py-12">
@@ -309,7 +295,6 @@ const TrainerClassesManage = () => {
         </div>
       </div>
       
-      {/* Delete Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

@@ -17,27 +17,22 @@ const ClassEditPage = () => {
   
   const [initialData, setInitialData] = useState(null);
   
-  // Check if user is a trainer and load class data
   useEffect(() => {
     if (user && user.userType !== 'trainer') {
       navigate('/dashboard');
       return;
     }
     
-    // Load class types and class data
     dispatch(getClassTypes());
     dispatch(getClass(id));
     
-    // Reset state when component unmounts
     return () => {
       dispatch(reset());
     };
   }, [user, id, navigate, dispatch]);
   
-  // Set initial form data when class is loaded
   useEffect(() => {
     if (currentClass) {
-      // Check if this class belongs to the current trainer
       if (currentClass.trainer && currentClass.trainer._id !== user?.id) {
         navigate('/classes/manage');
         return;
@@ -47,14 +42,12 @@ const ClassEditPage = () => {
     }
   }, [currentClass, user, navigate]);
   
-  // Redirect on successful class update
   useEffect(() => {
     if (isSuccess && initialData) {
       navigate('/classes/manage');
     }
   }, [isSuccess, initialData, navigate]);
   
-  // Handle form submission
   const handleSubmit = (formData) => {
     dispatch(updateClass({
       classId: id,

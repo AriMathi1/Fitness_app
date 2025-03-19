@@ -18,7 +18,6 @@ const PaymentDetails = () => {
   const [refundReason, setRefundReason] = useState('');
   const [refundSuccess, setRefundSuccess] = useState(false);
 
-  // Fetch payment details on component mount
   useEffect(() => {
     dispatch(getPaymentDetails(id));
 
@@ -27,13 +26,11 @@ const PaymentDetails = () => {
     };
   }, [dispatch, id]);
 
-  // Handle refund success
   useEffect(() => {
     if (isSuccess && showRefundModal) {
       setShowRefundModal(false);
       setRefundSuccess(true);
 
-      // Reset refund success state after 3 seconds
       const timer = setTimeout(() => {
         setRefundSuccess(false);
       }, 3000);
@@ -42,7 +39,6 @@ const PaymentDetails = () => {
     }
   }, [isSuccess, showRefundModal]);
 
-  // Format date
   const formatDate = (dateString) => {
     try {
       return format(new Date(dateString), 'MMMM d, yyyy h:mm a');
@@ -51,7 +47,6 @@ const PaymentDetails = () => {
     }
   };
 
-  // Get status badge color
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
@@ -67,13 +62,11 @@ const PaymentDetails = () => {
     }
   };
 
-  // Check if payment can be refunded
   const canRefund = () => {
     if (!currentPayment) return false;
     return currentPayment.status === 'completed';
   };
 
-  // Handle refund
   const handleRefund = () => {
     dispatch(refundPayment({
       paymentId: id,
@@ -142,7 +135,6 @@ const PaymentDetails = () => {
           </Link>
         </nav>
 
-        {/* Refund Success Message */}
         {refundSuccess && (
           <div className="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-md">
             <div className="flex">
@@ -158,7 +150,6 @@ const PaymentDetails = () => {
           </div>
         )}
 
-        {/* Error Message */}
         {isError && (
           <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md">
             <div className="flex">
@@ -289,7 +280,6 @@ const PaymentDetails = () => {
         </div>
       </div>
 
-      {/* Refund Confirmation Modal */}
       {showRefundModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">

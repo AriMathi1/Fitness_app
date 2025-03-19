@@ -10,7 +10,7 @@ const Register = () => {
     email: '',
     password: '',
     password2: '',
-    userType: 'client', // Default to client
+    userType: 'client',
   });
   
   const [formErrors, setFormErrors] = useState({});
@@ -24,13 +24,11 @@ const Register = () => {
   );
   
   useEffect(() => {
-    // Redirect when registered
     if (isSuccess || user) {
       navigate('/dashboard');
     }
     
     return () => {
-      // Reset state when component unmounts
       dispatch(reset());
     };
   }, [user, isSuccess, navigate, dispatch]);
@@ -42,7 +40,6 @@ const Register = () => {
       [name]: value,
     }));
     
-    // Clear error for this field when changing
     if (formErrors[name]) {
       setFormErrors({
         ...formErrors,

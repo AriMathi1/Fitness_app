@@ -18,14 +18,12 @@ const ForgotPassword = () => {
   
   useEffect(() => {
     return () => {
-      // Reset state when component unmounts
       dispatch(reset());
     };
   }, [dispatch]);
   
   const onChange = (e) => {
     setEmail(e.target.value);
-    // Clear error when typing
     if (formErrors.email) {
       setFormErrors({});
     }

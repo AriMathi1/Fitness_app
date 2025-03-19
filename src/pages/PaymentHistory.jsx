@@ -15,7 +15,6 @@ const PaymentHistory = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [filteredPayments, setFilteredPayments] = useState([]);
   
-  // Fetch payment history on component mount
   useEffect(() => {
     dispatch(getPaymentHistory());
     
@@ -24,7 +23,6 @@ const PaymentHistory = () => {
     };
   }, [dispatch]);
   
-  // Filter payments based on the active filter
   useEffect(() => {
     if (payments?.length > 0) {
       switch (activeFilter) {
@@ -43,7 +41,6 @@ const PaymentHistory = () => {
     }
   }, [payments, activeFilter]);
   
-  // Format date
   const formatDate = (dateString) => {
     try {
       return format(new Date(dateString), 'MMM d, yyyy');
@@ -52,7 +49,6 @@ const PaymentHistory = () => {
     }
   };
   
-  // Format time
   const formatTime = (dateString) => {
     try {
       return format(new Date(dateString), 'h:mm a');
@@ -61,7 +57,6 @@ const PaymentHistory = () => {
     }
   };
   
-  // Get status badge color
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
@@ -105,7 +100,6 @@ const PaymentHistory = () => {
           </div>
         )}
         
-        {/* Filter Tabs */}
         <div className="mt-6 bg-white shadow rounded-lg overflow-hidden">
           <div className="border-b border-gray-200">
             <nav className="flex -mb-px">
@@ -152,7 +146,6 @@ const PaymentHistory = () => {
             </nav>
           </div>
           
-          {/* Payments List */}
           {isLoading ? (
             <div className="py-12 flex justify-center">
               <Spinner />

@@ -23,19 +23,16 @@ const TrainerDetails = () => {
     (state) => state.trainers
   );
   
-  // Fetch trainer details and reviews
   useEffect(() => {
     dispatch(getTrainer(id));
     dispatch(getTrainerReviews(id));
     
-    // Cleanup on unmount
     return () => {
       dispatch(reset());
       dispatch(clearCurrentTrainer());
     };
   }, [dispatch, id]);
   
-  // Check if logged-in user is a client and not the trainer
   const canReview = user && user.userType === 'client' && user.id !== id;
   
   if (isLoading || !currentTrainer) {
@@ -55,18 +52,15 @@ const TrainerDetails = () => {
     );
   }
   
-  // Generate star rating display
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
     
-    // Full stars
     for (let i = 0; i < fullStars; i++) {
       stars.push(<FaStar key={`full-${i}`} className="text-yellow-400" />);
     }
     
-    // Empty stars
     for (let i = fullStars + (hasHalfStar ? 1 : 0); i < 5; i++) {
       stars.push(<FaRegStar key={`empty-${i}`} className="text-gray-300" />);
     }
@@ -80,7 +74,6 @@ const TrainerDetails = () => {
         &larr; Back to Trainers
       </Link>
       
-      {/* Trainer Profile */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
         <div className="p-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-start">
@@ -106,7 +99,6 @@ const TrainerDetails = () => {
             )}
           </div>
           
-          {/* Bio */}
           {currentTrainer.profile.bio && (
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-2">
@@ -119,7 +111,6 @@ const TrainerDetails = () => {
           )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Specialties */}
             {currentTrainer.profile.specialties && 
              currentTrainer.profile.specialties.length > 0 && (
               <div>
@@ -136,7 +127,6 @@ const TrainerDetails = () => {
               </div>
             )}
             
-            {/* Qualifications */}
             {currentTrainer.profile.qualifications && 
              currentTrainer.profile.qualifications.length > 0 && (
               <div>
@@ -154,7 +144,6 @@ const TrainerDetails = () => {
             )}
           </div>
           
-          {/* Certifications */}
           {currentTrainer.profile.certifications && 
            currentTrainer.profile.certifications.length > 0 && (
             <div className="mt-6">
@@ -179,7 +168,6 @@ const TrainerDetails = () => {
             </div>
           )}
           
-          {/* Availability */}
           {currentTrainer.profile.availability && 
            currentTrainer.profile.availability.length > 0 && (
             <div className="mt-6">
@@ -201,7 +189,6 @@ const TrainerDetails = () => {
         </div>
       </div>
       
-      {/* Reviews Section */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
@@ -209,7 +196,6 @@ const TrainerDetails = () => {
               Reviews ({reviews.length})
             </h2>
             
-            {/* Review button for clients only */}
             {canReview && (
               <button 
                 onClick={() => setShowReviewForm(!showReviewForm)}
@@ -220,7 +206,6 @@ const TrainerDetails = () => {
             )}
           </div>
           
-          {/* Review Form */}
           {showReviewForm && canReview && (
             <ReviewForm 
               trainerId={id} 
@@ -228,7 +213,6 @@ const TrainerDetails = () => {
             />
           )}
           
-          {/* Reviews List */}
           {reviews.length > 0 ? (
             <div className="space-y-4">
               {reviews.map((review) => (

@@ -104,9 +104,6 @@ const PaymentForm = ({ bookingId, amount, onSuccess }) => {
     );
   }
   
-  // In src/components/payments/PaymentForm.jsx
-
-// Enhance the success UI in the PaymentForm
 if (paymentSuccess) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">

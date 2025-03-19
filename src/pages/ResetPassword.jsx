@@ -31,7 +31,6 @@ const ResetPassword = () => {
     }
 
     return () => {
-      // Reset state when component unmounts
       dispatch(reset());
     };
   }, [dispatch, resetToken]);
@@ -43,7 +42,6 @@ const ResetPassword = () => {
       [name]: value,
     }));
     
-    // Clear error for this field when changing
     if (formErrors[name]) {
       setFormErrors({
         ...formErrors,
@@ -88,7 +86,6 @@ const ResetPassword = () => {
     setSubmitted(true);
   };
   
-  // Redirect to login after successful password reset
   useEffect(() => {
     if (isSuccess && submitted) {
       const timer = setTimeout(() => {

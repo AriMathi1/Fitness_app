@@ -31,23 +31,19 @@ const Profile = () => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [originalData, setOriginalData] = useState({});
 
-  // Fitness preference options
   const fitnessOptions = [
     'Yoga', 'Pilates', 'HIIT', 'Strength Training', 
     'Cardio', 'Dance', 'Cycling', 'Running', 
     'Swimming', 'Martial Arts', 'CrossFit', 'Boxing'
   ];
 
-  // Availability options - we'll use more structured availability data
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const timeSlots = ['Morning', 'Afternoon', 'Evening'];
 
-  // Load profile data
   useEffect(() => {
     dispatch(getProfile());
   }, [dispatch]);
 
-  // Update form when profile data is loaded
   useEffect(() => {
     if (profile && user) {
       const formattedData = {
@@ -68,13 +64,11 @@ const Profile = () => {
     }
   }, [profile, user]);
 
-  // Handle success message on profile update
   useEffect(() => {
     if (updateSuccess) {
       setSuccessMessage('Profile updated successfully!');
       setHasUnsavedChanges(false);
       
-      // Clear success message after 3 seconds
       const timer = setTimeout(() => {
         setSuccessMessage('');
         dispatch(resetUpdateStatus());
@@ -84,13 +78,11 @@ const Profile = () => {
     }
   }, [updateSuccess, dispatch]);
 
-  // Check for unsaved changes
   useEffect(() => {
     const hasChanges = JSON.stringify(formData) !== JSON.stringify(originalData);
     setHasUnsavedChanges(hasChanges);
   }, [formData, originalData]);
 
-  // Confirm before leaving with unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasUnsavedChanges) {
@@ -113,7 +105,6 @@ const Profile = () => {
       [name]: value,
     }));
     
-    // Clear error on change
     if (formErrors[name]) {
       setFormErrors((prev) => ({
         ...prev,
@@ -140,7 +131,6 @@ const Profile = () => {
     });
   };
 
-  // Form validation
   const validateForm = () => {
     const errors = {};
     const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
@@ -177,7 +167,6 @@ const Profile = () => {
     e.preventDefault();
     
     if (!validateForm()) {
-      // Scroll to the first error
       const firstError = document.querySelector('.text-red-600');
       if (firstError) {
         firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -251,7 +240,6 @@ const Profile = () => {
             
             <form onSubmit={onSubmit}>
               <div className="space-y-8">
-                {/* Basic Information Section */}
                 <div>
                   <h3 className="text-lg font-medium text-gray-900 border-b pb-2">Basic Information</h3>
                   <div className="mt-4 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
@@ -317,7 +305,6 @@ const Profile = () => {
                   </div>
                 </div>
                 
-                {/* Bio Section */}
                 <div>
                   <h3 className="text-lg font-medium text-gray-900 border-b pb-2">About You</h3>
                   <div className="mt-4">
@@ -338,7 +325,6 @@ const Profile = () => {
                   </div>
                 </div>
                 
-                {/* Client-specific fields */}
                 {user?.userType === 'client' && (
                   <>
                     <div>
@@ -432,7 +418,6 @@ const Profile = () => {
                   </>
                 )}
                 
-                {/* Trainer-specific fields */}
                 {user?.userType === 'trainer' && (
                   <>
                     <div>
@@ -514,7 +499,6 @@ const Profile = () => {
                   </>
                 )}
                 
-                {/* Form Buttons */}
                 <div className="flex justify-end space-x-3">
                   {hasUnsavedChanges && (
                     <button 
